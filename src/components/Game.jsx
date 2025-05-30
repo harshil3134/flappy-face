@@ -24,7 +24,7 @@ const handlefacecontrol=async()=>{
         {
           console.log("returned true in game",modelloader);
           
-          return false;
+          return true;
         }
     }
     else{
