@@ -1,0 +1,141 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    background: #d5edff;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.sky {
+    perspective: 400px;
+    margin-top: -60px;
+    filter: drop-shadow(0 150px 10px #00000040);
+}
+
+.sky div {
+    transform-style: preserve-3d;
+}
+
+.bird {
+    animation: flyingAnim 10s linear infinite;
+     transform: rotateX(-120deg) rotateZ(90deg) rotateX(10deg) scale(0.6);
+}
+
+/* @keyframes flyingAnim {
+    0% {
+        transform: rotateX(-120deg) rotateZ(0deg) rotateX(10deg);
+    }
+
+    100% {
+        transform: rotateX(-120deg) rotateZ(360deg) rotateX(10deg);
+    }
+} */
+
+/* @keyframes flowingWindAnim {
+    0% {
+        transform: translateY(-300px);
+    }
+
+    100% {
+        transform: translateY(200px);
+    }
+} */
+
+.body {
+    position: relative;
+    height: 40px;
+    width: 30px;
+    background: #48c0d3;
+}
+
+.head {
+    position: absolute;
+    top: -30px;
+    border-left: 15px solid transparent;
+    border-bottom: 30px solid #033d51;
+    border-right: 15px solid transparent;
+    transform: rotateX(-20deg);
+    transform-origin: 50% 100%;
+}
+
+.left-wing {
+    position: absolute;
+    left: -30px;
+    height: 30px;
+    border-bottom: 10px solid transparent;
+    border-right: 30px solid #ef9c9f;
+    transform-origin: 100% 0;
+    animation: leftWingAnim 1s cubic-bezier(0.35, 0.1, 0.15, 1) infinite alternate;
+}
+
+.left-top-wing {
+    position: absolute;
+    left: -30px;
+    border-bottom: 30px solid transparent;
+    border-right: 30px solid #b06ea6;
+    transform-origin: 100% 0;
+    animation: leftWingAnim 1s cubic-bezier(0.35, 0.1, 0.15, 1) infinite alternate;
+}
+
+@keyframes leftWingAnim {
+    0% {
+        transform: rotateY(-40deg);
+    }
+
+    100% {
+        transform: rotateY(40deg);
+    }
+}
+
+.right-wing {
+    position: absolute;
+    left: 30px;
+    height: 30px;
+    border-bottom: 10px solid transparent;
+    border-left: 30px solid #ef9c9f;
+    transform-origin: 0 0;
+    animation: rightWingAnim 1s cubic-bezier(0.35, 0.1, 0.15, 1) infinite alternate;
+}
+
+.right-top-wing {
+    position: absolute;
+    border-bottom: 30px solid transparent;
+    border-left: 30px solid #b06ea6;
+    transform-origin: 0 0;
+    animation: rightWingAnim 1s cubic-bezier(0.35, 0.1, 0.15, 1) infinite alternate;
+}
+
+@keyframes rightWingAnim {
+    0% {
+        transform: rotateY(40deg);
+    }
+
+    100% {
+        transform: rotateY(-40deg);
+    }
+}
+
+.left-tail {
+    position: absolute;
+    top: 40px;
+    transform: rotateX(-20deg);
+    border-top: 40px solid #48c0d3;
+    border-right: 30px solid transparent;
+    transform-origin: 50% 0;
+}
+
+.right-tail {
+    position: absolute;
+    top: 40px;
+    transform: rotateX(-20deg);
+    border-top: 40px solid #033d51;
+    border-left: 30px solid transparent;
+    transform-origin: 50% 0;
+}
