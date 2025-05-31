@@ -7,6 +7,12 @@ let results;
 let lastVideoTime = -1;
 let webcamRunning = false;
 let onJumpCallback=null;
+let enabledExpressions = {
+  smile: true,
+  jawOpen: true,
+  eyeBlink: true,
+  mouthPucker: true
+};
 
 export async function createFaceLandmarker() {
   const filesetResolver = await FilesetResolver.forVisionTasks(
@@ -52,8 +58,11 @@ export async function initializeWebcam() {
 }
 
 // ✅ Start the prediction loop
-export function startFaceDetection(jumpCallback) {
+export function startFaceDetection(jumpCallback, expressionConfig = null) {
   onJumpCallback=jumpCallback;
+  if (expressionConfig) {
+    enabledExpressions = { ...enabledExpressions, ...expressionConfig };
+  }
   webcamRunning = true;
   predictwebcam(); // Start the loop
 }
@@ -112,41 +121,47 @@ const checkforexpression=(result)=>{
 
   const now=Date.now();
 
+  if((now - lasttime )< 700 )
+  {
+    console.log("jump blocked ");
+    
+    return;
+  }
 
-if((now - lasttime )< 700 )
-{
-  console.log("jump blocked ");
+  // console.log("Res",result);
+  const mouthPucker=result[38];
+  const eyeblinkLeft=result[8];
+  const eyeblinkRight=result[9];
+  const jawopen=result[25];
+  const smileLeft=result[44];
+  const smileRight=result[45];
   
-  return;
-}
+  let shouldJump = false;
+  
+  // Check each expression only if it's enabled
+  if (enabledExpressions.mouthPucker && mouthPucker.score > 0.5) {
+    console.log("🫦 Mouth pucker detected!", mouthPucker.score);
+    shouldJump = true;
+  }
+  
+  if (enabledExpressions.eyeBlink && (eyeblinkLeft.score > 0.5 || eyeblinkRight.score > 0.5)) {
+    console.log("😉 Eye blink detected!", eyeblinkLeft.score, eyeblinkRight.score);
+    shouldJump = true;
+  }
+  
+  if (enabledExpressions.jawOpen && jawopen.score > 0.5) {
+    console.log("😮 Jaw open detected!", jawopen.score);
+    shouldJump = true;
+  }
+  
+  if (enabledExpressions.smile && (smileLeft.score > 0.5 || smileRight.score > 0.5)) {
+    console.log("😊 Smile detected!", smileLeft.score, smileRight.score);
+    shouldJump = true;
+  }
 
-// console.log("Res",result);
-const mouthPucker=result[38];
-const eyeblinkLeft=result[8];
-const eyeblinkRight=result[9];
-const jawopen=result[25];
-const smileLeft=result[44];
-const smileRight=result[45];
-
-if(mouthPucker.score>0.5 || eyeblinkLeft.score>0.5 || eyeblinkRight.score>0.5 || jawopen>0.5 || smileLeft>0.5 || smileRight>0.5)
-{
-console.log("jump operation performed");
-if(onJumpCallback)
-{
-  onJumpCallback();
-lasttime=now;
-}
-
-}
-
-
-
-// result.forEach((e)=>{
-//   if(e.score>0.5)
-//   {
-//     console.log("event detected",e.categoryName,"score",e.score,"index",e.index);
-//   }
-// })
-
-
+  if (shouldJump && onJumpCallback) {
+    console.log("🐦 Jump operation performed!");
+    onJumpCallback();
+    lasttime = now;
+  }
 }

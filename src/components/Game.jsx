@@ -9,6 +9,14 @@ function Game() {
   const [gameState, setGameState] = useState("start"); // "start", "running", "gameover"
   const [score, setScore] = useState(0);
     const [controlMode, setControlMode] = useState(null); // 'keyboard' or 'webcam'
+  const [showHelp, setShowHelp] = useState(false);
+  const [showExpressionControls, setShowExpressionControls] = useState(false);
+  const [expressionSettings, setExpressionSettings] = useState({
+    smile: true,
+    jawOpen: true,
+    eyeBlink: true,
+    mouthPucker: true
+  });
   const velocityYRef = useRef(0);
 
   // Setup face control only if webcam mode is selected
@@ -308,7 +316,7 @@ async function handleStartWebcam() {
           // Add jump callback for bird control
           velocityYRef.current = -6;
            console.log("🐦 Bird jumped from face!");
-        });
+        }, expressionSettings);
         console.log("Face detection started!");
       }, 1000); // Wait for video stream to be ready
       
@@ -400,8 +408,508 @@ async function handleStartWebcam() {
             <button onClick={handleStartKeyboard} style={{ fontSize: 32, padding: "16px 32px", borderRadius: 12, background: "#4f8edc", color: "#fff", border: "none", cursor: "pointer", boxShadow: "2px 2px 8px #000" }}>Play with Keyboard</button>
             <button onClick={handleStartWebcam} style={{ fontSize: 32, padding: "16px 32px", borderRadius: 12, background: "#43a047", color: "#fff", border: "none", cursor: "pointer", boxShadow: "2px 2px 8px #000" }}>Play with Webcam</button>
           </div>
+          
+          {/* Expression Settings Toggle Button - Compact */}
+          <div style={{ marginTop: 20 }}>
+            <button 
+              onClick={() => setShowExpressionControls(!showExpressionControls)}
+              style={{
+                fontSize: 14,
+                padding: "8px 16px",
+                borderRadius: 8,
+                background: showExpressionControls ? "#ff9ff3" : "rgba(255,159,243,0.2)",
+                color: "#fff",
+                border: "1px solid rgba(255,159,243,0.4)",
+                cursor: "pointer",
+                fontWeight: 500,
+                transition: "all 0.3s ease",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                position: "relative"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = showExpressionControls ? "#e589d1" : "rgba(255,159,243,0.4)";
+                e.target.style.transform = "scale(1.02)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = showExpressionControls ? "#ff9ff3" : "rgba(255,159,243,0.2)";
+                e.target.style.transform = "scale(1)";
+              }}
+            >
+              <span style={{ fontSize: 16 }}>🎭</span>
+              <span>Webcam Settings</span>
+              {!showExpressionControls && (
+                <span style={{ 
+                  fontSize: 11, 
+                  background: "rgba(255,255,255,0.2)", 
+                  padding: "2px 6px", 
+                  borderRadius: 4,
+                  marginLeft: 4
+                }}>
+                  {Object.values(expressionSettings).filter(Boolean).length}/4
+                </span>
+              )}
+              <span style={{ 
+                transform: showExpressionControls ? 'rotate(180deg)' : 'rotate(0deg)', 
+                transition: 'transform 0.3s ease',
+                fontSize: 12,
+                marginLeft: 'auto'
+              }}>
+                ⌄
+              </span>
+            </button>
+          </div>
+
+          {/* Expression Settings for Webcam Mode - Ultra Compact */}
+          {showExpressionControls && (
+            <div style={{ 
+              marginTop: 12, 
+              padding: 12, 
+              background: "rgba(255,255,255,0.08)", 
+              borderRadius: 8, 
+              border: "1px solid rgba(255,159,243,0.2)",
+              backdropFilter: "blur(8px)",
+              animation: "slideUp 0.3s ease-out",
+              maxWidth: 360
+            }}>
+              <p style={{ 
+                fontSize: 12, 
+                color: "#ccc", 
+                textAlign: "center", 
+                marginBottom: 10,
+                lineHeight: 1.2
+              }}>
+                Select facial expressions to trigger jumps
+              </p>
+              
+              <div style={{ 
+                display: "grid", 
+                gridTemplateColumns: "1fr 1fr", 
+                gap: 6, 
+                marginBottom: 10
+              }}>
+                {/* Smile Checkbox - Compact */}
+                <label style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  cursor: "pointer",
+                  padding: "6px 8px",
+                  background: expressionSettings.smile ? "rgba(72, 219, 251, 0.15)" : "rgba(255,255,255,0.05)",
+                  borderRadius: 6,
+                  border: `1px solid ${expressionSettings.smile ? "#48dbfb" : "rgba(255,255,255,0.1)"}`,
+                  transition: "all 0.2s ease",
+                  fontSize: 12
+                }}>
+                  <input 
+                    type="checkbox" 
+                    checked={expressionSettings.smile}
+                    onChange={(e) => setExpressionSettings(prev => ({...prev, smile: e.target.checked}))}
+                    style={{ 
+                      marginRight: 6, 
+                      transform: "scale(0.9)",
+                      accentColor: "#48dbfb"
+                    }}
+                  />
+                  <span style={{ fontSize: 14, marginRight: 4 }}>😊</span>
+                  <span style={{ color: "#fff", fontWeight: 500 }}>Smile</span>
+                </label>
+
+                {/* Jaw Open Checkbox - Compact */}
+                <label style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  cursor: "pointer",
+                  padding: "6px 8px",
+                  background: expressionSettings.jawOpen ? "rgba(254, 202, 87, 0.15)" : "rgba(255,255,255,0.05)",
+                  borderRadius: 6,
+                  border: `1px solid ${expressionSettings.jawOpen ? "#feca57" : "rgba(255,255,255,0.1)"}`,
+                  transition: "all 0.2s ease",
+                  fontSize: 12
+                }}>
+                  <input 
+                    type="checkbox" 
+                    checked={expressionSettings.jawOpen}
+                    onChange={(e) => setExpressionSettings(prev => ({...prev, jawOpen: e.target.checked}))}
+                    style={{ 
+                      marginRight: 6, 
+                      transform: "scale(0.9)",
+                      accentColor: "#feca57"
+                    }}
+                  />
+                  <span style={{ fontSize: 14, marginRight: 4 }}>😮</span>
+                  <span style={{ color: "#fff", fontWeight: 500 }}>Open</span>
+                </label>
+
+                {/* Eye Blink Checkbox - Compact */}
+                <label style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  cursor: "pointer",
+                  padding: "6px 8px",
+                  background: expressionSettings.eyeBlink ? "rgba(84, 160, 255, 0.15)" : "rgba(255,255,255,0.05)",
+                  borderRadius: 6,
+                  border: `1px solid ${expressionSettings.eyeBlink ? "#54a0ff" : "rgba(255,255,255,0.1)"}`,
+                  transition: "all 0.2s ease",
+                  fontSize: 12
+                }}>
+                  <input 
+                    type="checkbox" 
+                    checked={expressionSettings.eyeBlink}
+                    onChange={(e) => setExpressionSettings(prev => ({...prev, eyeBlink: e.target.checked}))}
+                    style={{ 
+                      marginRight: 6, 
+                      transform: "scale(0.9)",
+                      accentColor: "#54a0ff"
+                    }}
+                  />
+                  <span style={{ fontSize: 14, marginRight: 4 }}>😉</span>
+                  <span style={{ color: "#fff", fontWeight: 500 }}>Blink</span>
+                </label>
+
+                {/* Mouth Pucker Checkbox - Compact */}
+                <label style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  cursor: "pointer",
+                  padding: "6px 8px",
+                  background: expressionSettings.mouthPucker ? "rgba(255, 107, 107, 0.15)" : "rgba(255,255,255,0.05)",
+                  borderRadius: 6,
+                  border: `1px solid ${expressionSettings.mouthPucker ? "#ff6b6b" : "rgba(255,255,255,0.1)"}`,
+                  transition: "all 0.2s ease",
+                  fontSize: 12
+                }}>
+                  <input 
+                    type="checkbox" 
+                    checked={expressionSettings.mouthPucker}
+                    onChange={(e) => setExpressionSettings(prev => ({...prev, mouthPucker: e.target.checked}))}
+                    style={{ 
+                      marginRight: 6, 
+                      transform: "scale(0.9)",
+                      accentColor: "#ff6b6b"
+                    }}
+                  />
+                  <span style={{ fontSize: 14, marginRight: 4 }}>😙</span>
+                  <span style={{ color: "#fff", fontWeight: 500 }}>Kiss</span>
+                </label>
+              </div>
+
+              {/* Quick Select Buttons - Mini */}
+              <div style={{ 
+                display: "flex", 
+                gap: 6, 
+                justifyContent: "center"
+              }}>
+                <button 
+                  onClick={() => setExpressionSettings({smile: true, jawOpen: true, eyeBlink: true, mouthPucker: true})}
+                  style={{
+                    padding: "4px 10px",
+                    fontSize: 11,
+                    background: "#43a047",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                    fontWeight: 500,
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = "#388e3c"}
+                  onMouseLeave={(e) => e.target.style.background = "#43a047"}
+                >
+                  ✅ All
+                </button>
+                <button 
+                  onClick={() => setExpressionSettings({smile: false, jawOpen: false, eyeBlink: false, mouthPucker: false})}
+                  style={{
+                    padding: "4px 10px",
+                    fontSize: 11,
+                    background: "#e53935",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                    fontWeight: 500,
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = "#c62828"}
+                  onMouseLeave={(e) => e.target.style.background = "#e53935"}
+                >
+                  ❌ None
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {/* Help Button */}
+          <div style={{ marginTop: 40 }}>
+            <button 
+              onClick={() => setShowHelp(true)}
+              style={{ 
+                fontSize: 24, 
+                padding: "12px 24px", 
+                borderRadius: 12, 
+                background: "#ff6b6b", 
+                color: "#fff", 
+                border: "none", 
+                cursor: "pointer", 
+                boxShadow: "2px 2px 8px #000",
+                transition: "all 0.3s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = "#ff5252";
+                e.target.style.transform = "scale(1.05)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = "#ff6b6b";
+                e.target.style.transform = "scale(1)";
+              }}
+            >
+              📖 How to Play
+            </button>
+          </div>
         </div>
       )}
+
+      {/* Help Modal */}
+      {showHelp && (
+        <div 
+          style={{
+            position: "fixed", 
+            left: 0, 
+            top: 0, 
+            width: "100%", 
+            height: "100%", 
+            zIndex: 50,
+            background: "rgba(0,0,0,0.8)", 
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "center",
+            animation: "fadeIn 0.3s ease-in-out"
+          }}
+          onClick={() => setShowHelp(false)}
+        >
+          <div 
+            style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              borderRadius: 20,
+              padding: 40,
+              maxWidth: 600,
+              maxHeight: "80vh",
+              overflowY: "auto",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+              animation: "slideUp 0.4s ease-out",
+              color: "#fff"
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30 }}>
+              <h2 style={{ 
+                fontSize: 36, 
+                fontWeight: 700, 
+                margin: 0,
+                background: "linear-gradient(45deg, #feca57, #ff9ff3)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontFamily: 'Fredoka One, Comic Sans MS, Arial, sans-serif'
+              }}>
+                How to Play Flappy Face 🎮
+              </h2>
+              <button 
+                onClick={() => setShowHelp(false)}
+                style={{
+                  background: "rgba(255,255,255,0.2)",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: 40,
+                  height: 40,
+                  fontSize: 20,
+                  color: "#fff",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.3s ease"
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = "rgba(255,255,255,0.3)";
+                  e.target.style.transform = "scale(1.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = "rgba(255,255,255,0.2)";
+                  e.target.style.transform = "scale(1)";
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Game Objective */}
+            <div style={{ marginBottom: 30 }}>
+              <h3 style={{ 
+                fontSize: 24, 
+                fontWeight: 600, 
+                marginBottom: 12,
+                color: "#feca57"
+              }}>
+                🎯 Objective
+              </h3>
+              <p style={{ fontSize: 16, lineHeight: 1.6, margin: 0 }}>
+                Navigate your colorful bird through pipes without crashing! Score points by successfully passing through pipe gaps. The game gets faster as your score increases.
+              </p>
+            </div>
+
+            {/* Keyboard Controls */}
+            <div style={{ marginBottom: 30 }}>
+              <h3 style={{ 
+                fontSize: 24, 
+                fontWeight: 600, 
+                marginBottom: 12,
+                color: "#48dbfb"
+              }}>
+                ⌨️ Keyboard Mode
+              </h3>
+              <div style={{ 
+                background: "rgba(255,255,255,0.1)", 
+                borderRadius: 12, 
+                padding: 20,
+                border: "2px solid rgba(72, 219, 251, 0.3)"
+              }}>
+                <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                  <span style={{ 
+                    background: "#4f8edc", 
+                    color: "#fff", 
+                    padding: "8px 16px", 
+                    borderRadius: 8, 
+                    fontWeight: 600, 
+                    marginRight: 12,
+                    fontFamily: "monospace"
+                  }}>
+                    SPACEBAR
+                  </span>
+                  <span style={{ fontSize: 16 }}>Press to make the bird jump upward</span>
+                </div>
+                <p style={{ fontSize: 14, color: "#ccc", margin: 0 }}>
+                  💡 <strong>Tip:</strong> Timing is everything! Press spacebar at the right moment to navigate through pipe gaps.
+                </p>
+              </div>
+            </div>
+
+            {/* Webcam Controls */}
+            <div style={{ marginBottom: 30 }}>
+              <h3 style={{ 
+                fontSize: 24, 
+                fontWeight: 600, 
+                marginBottom: 12,
+                color: "#ff9ff3"
+              }}>
+                📷 Webcam Mode (Face Control)
+              </h3>
+              <div style={{ 
+                background: "rgba(255,255,255,0.1)", 
+                borderRadius: 12, 
+                padding: 20,
+                border: "2px solid rgba(255, 159, 243, 0.3)"
+              }}>
+                <p style={{ fontSize: 16, marginBottom: 16, color: "#feca57" }}>
+                  🎭 <strong>Control the bird with your facial expressions!</strong>
+                </p>
+                
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <span style={{ fontSize: 20, marginRight: 8 }}>😮</span>
+                    <span style={{ fontSize: 14 }}>Open your mouth</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <span style={{ fontSize: 20, marginRight: 8 }}>😙</span>
+                    <span style={{ fontSize: 14 }}>Pucker lips (kiss)</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <span style={{ fontSize: 20, marginRight: 8 }}>😊</span>
+                    <span style={{ fontSize: 14 }}>Smile big</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <span style={{ fontSize: 20, marginRight: 8 }}>😉</span>
+                    <span style={{ fontSize: 14 }}>Blink either eye</span>
+                  </div>
+                </div>
+
+                <div style={{ 
+                  background: "rgba(67, 160, 71, 0.2)", 
+                  borderRadius: 8, 
+                  padding: 12, 
+                  marginBottom: 12,
+                  border: "1px solid rgba(67, 160, 71, 0.4)"
+                }}>
+                  <p style={{ fontSize: 14, margin: 0 }}>
+                    🟢 <strong>Camera Setup:</strong> Allow camera permission when prompted. Your webcam feed will be processed locally for face detection.
+                  </p>
+                </div>
+
+                <div style={{ 
+                  background: "rgba(255, 107, 107, 0.2)", 
+                  borderRadius: 8, 
+                  padding: 12,
+                  border: "1px solid rgba(255, 107, 107, 0.4)"
+                }}>
+                  <p style={{ fontSize: 14, margin: 0 }}>
+                    ⚠️ <strong>Privacy:</strong> No video data is stored or transmitted. Face detection runs entirely in your browser using Google MediaPipe.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Pro Tips */}
+            <div style={{ marginBottom: 20 }}>
+              <h3 style={{ 
+                fontSize: 24, 
+                fontWeight: 600, 
+                marginBottom: 12,
+                color: "#54a0ff"
+              }}>
+                🏆 Pro Tips
+              </h3>
+              <ul style={{ fontSize: 16, lineHeight: 1.8, paddingLeft: 20 }}>
+                <li>Start with keyboard mode to learn the game mechanics</li>
+                <li>In webcam mode, sit in good lighting for better face detection</li>
+                <li>Practice gentle expressions - exaggerated gestures work best</li>
+                <li>The bird has momentum - plan your jumps ahead of time</li>
+                <li>Game speed increases every 5 points - stay focused!</li>
+              </ul>
+            </div>
+
+            {/* Close Button */}
+            <div style={{ textAlign: "center" }}>
+              <button 
+                onClick={() => setShowHelp(false)}
+                style={{
+                  fontSize: 20,
+                  padding: "12px 32px",
+                  borderRadius: 12,
+                  background: "linear-gradient(45deg, #feca57, #ff6b6b)",
+                  color: "#fff",
+                  border: "none",
+                  cursor: "pointer",
+                  fontWeight: 600,
+                  boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+                  transition: "all 0.3s ease"
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = "scale(1.05)";
+                  e.target.style.boxShadow = "0 6px 20px rgba(0,0,0,0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = "scale(1)";
+                  e.target.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
+                }}
+              >
+                Got it! Let's Play 🚀
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Game Over Overlay */}
       {gameState === "gameover" && (
         <div style={{

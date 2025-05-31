@@ -139,3 +139,57 @@ body {
     border-left: 30px solid transparent;
     transform-origin: 50% 0;
 }
+
+/* Help Modal Animations */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Responsive adjustments for help modal */
+@media (max-width: 768px) {
+    .help-modal {
+        margin: 20px;
+        padding: 20px;
+        max-width: none;
+    }
+    
+    .help-modal h2 {
+        font-size: 28px;
+    }
+    
+    .help-modal h3 {
+        font-size: 20px;
+    }
+    
+    .help-modal p, .help-modal li {
+        font-size: 14px;
+    }
+}
