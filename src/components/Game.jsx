@@ -19,6 +19,41 @@ function Game() {
   });
   const velocityYRef = useRef(0);
 
+  // ✅ Camera cleanup function
+  const cleanupCamera = () => {
+    // Stop face detection
+    stopFaceDetection();
+    
+    // Stop camera stream
+    const video = document.getElementById("webcam");
+    if (video && video.srcObject) {
+      const stream = video.srcObject;
+      const tracks = stream.getTracks();
+      
+      tracks.forEach(track => {
+        track.stop();
+        console.log('Camera track stopped');
+      });
+      
+      video.srcObject = null;
+      console.log('Camera stream cleaned up');
+    }
+  };
+
+  // ✅ Cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      cleanupCamera();
+    };
+  }, []);
+
+  // ✅ Cleanup when game state changes from running to gameover
+  useEffect(() => {
+    if (gameState === "gameover" && controlMode === "webcam") {
+      cleanupCamera();
+    }
+  }, [gameState, controlMode]);
+
   // Setup face control only if webcam mode is selected
 
 const handlefacecontrol=async()=>{
@@ -305,6 +340,9 @@ async function handleStartWebcam() {
    
   
   if(res == true) {
+    // ✅ Clean up any existing camera first
+    cleanupCamera();
+    
     // ✅ FIRST: Initialize webcam and get camera permission
     let resweb = await initializeWebcam()
      
@@ -324,11 +362,19 @@ async function handleStartWebcam() {
       setGameState("running");
       setBirdPos({ x: 100, y: 250 });
       setScore(0);
+    } else {
+      console.error('Failed to initialize webcam');
     }
+  } else {
+    console.error('Failed to load face detection model');
   }
 }
   function handleRestart() {
-      stopFaceDetection();
+    // ✅ Clean up camera before restarting
+    if (controlMode === "webcam") {
+      cleanupCamera();
+    }
+    
     setGameState("start");
     setBirdPos({ x: 100, y: 250 });
     setScore(0);
