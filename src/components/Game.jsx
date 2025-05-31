@@ -464,6 +464,7 @@ async function handleStartWebcam() {
       <video 
   id="webcam" 
   style={{ 
+   visibility:"hidden",
     position: "fixed", 
     top: 100, 
     right: 10, 
@@ -476,9 +477,9 @@ async function handleStartWebcam() {
   playsInline 
   muted
 />
-      <button id="startbtn" style={{ position: "fixed", top: 10, right: 10, zIndex: 1000 }}>Start Webcam</button>
-      <div id="webcamConnected" style={{  position: "fixed", top: 50, right: 10, zIndex: 1000, color: "lime" }}>Webcam Connected</div>
-      <div id="video-blend-shapes" style={{ }}></div>
+      <button id="startbtn" style={{display:"none", position: "fixed", top: 10, right: 10, zIndex: 1000 }}>Start Webcam</button>
+      <div id="webcamConnected" style={{ display:"none", position: "fixed", top: 50, right: 10, zIndex: 1000, color: "lime" }}>Webcam Connected</div>
+      {/* <div id="video-blend-shapes" style={{ }}></div> */}
     </div>
   );
 }
