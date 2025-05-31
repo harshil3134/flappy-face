@@ -27,12 +27,10 @@ export async function createFaceLandmarker() {
     runningMode: "VIDEO",
     numFaces: 1
   });
-  console.log("face model loaded successfully");
   return true;
 }
 
 export function isFaceModelLoaded() {
-  console.log("isfacemodelloaded",faceLandmarker);
   
   return faceLandmarker !== null && faceLandmarker!==undefined;
 }
@@ -42,17 +40,15 @@ export async function initializeWebcam() {
   
   try {
     if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
-      console.log("Camera not supported");
       return false; 
     }
     
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     video.srcObject = stream;
-    console.log("Camera permission granted!");
     return true; 
     
   } catch (err) {
-    console.log('Camera error:', err);
+     
     return false; 
   }
 }
@@ -90,12 +86,12 @@ async function predictwebcam() {
     
     // if (results && results.faceLandmarks) {
     //   for (const landmarks of results.faceLandmarks) {
-    //     console.log("Face detected with", landmarks, "landmarks");
+    //      
     //   }
     // }
     if(results && results.faceLandmarks)
     {
-      // console.log("face detected with",results.faceLandmarks.length,"faces");
+      //  
       
     }
 
@@ -108,7 +104,7 @@ if(results && results.faceBlendshapes.length>0)
 
 
   } catch (err) {
-    console.log("Prediction error:", err);
+     
   }
   
   // ✅ Continue the loop
@@ -123,12 +119,12 @@ const checkforexpression=(result)=>{
 
   if((now - lasttime )< 700 )
   {
-    console.log("jump blocked ");
+     
     
     return;
   }
 
-  // console.log("Res",result);
+  //  
   const mouthPucker=result[38];
   const eyeblinkLeft=result[8];
   const eyeblinkRight=result[9];
@@ -140,27 +136,27 @@ const checkforexpression=(result)=>{
   
   // Check each expression only if it's enabled
   if (enabledExpressions.mouthPucker && mouthPucker.score > 0.5) {
-    console.log("🫦 Mouth pucker detected!", mouthPucker.score);
+     
     shouldJump = true;
   }
   
   if (enabledExpressions.eyeBlink && (eyeblinkLeft.score > 0.5 || eyeblinkRight.score > 0.5)) {
-    console.log("😉 Eye blink detected!", eyeblinkLeft.score, eyeblinkRight.score);
+     
     shouldJump = true;
   }
   
   if (enabledExpressions.jawOpen && jawopen.score > 0.5) {
-    console.log("😮 Jaw open detected!", jawopen.score);
+     
     shouldJump = true;
   }
   
   if (enabledExpressions.smile && (smileLeft.score > 0.5 || smileRight.score > 0.5)) {
-    console.log("😊 Smile detected!", smileLeft.score, smileRight.score);
+     
     shouldJump = true;
   }
 
   if (shouldJump && onJumpCallback) {
-    console.log("🐦 Jump operation performed!");
+     
     onJumpCallback();
     lasttime = now;
   }

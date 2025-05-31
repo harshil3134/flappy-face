@@ -23,14 +23,14 @@ function Game() {
 
 const handlefacecontrol=async()=>{
     try{
-        console.log("face",isFaceModelLoaded());
+         
         
     if(!isFaceModelLoaded())
     {
         let modelloader=await createFaceLandmarker()
         if(modelloader==true)
         {
-          console.log("returned true in game",modelloader);
+           
           
           return true;
         }
@@ -41,7 +41,7 @@ const handlefacecontrol=async()=>{
 }
     catch(err)
     {
-        console.log("err",err);
+         
         return false;
     }     
     
@@ -302,12 +302,12 @@ if (distanceSinceLastPipe >= desiredPipeGap) {
 
 async function handleStartWebcam() {
   const res = await handlefacecontrol()
-  console.log("Model loaded:", res);
+   
   
   if(res == true) {
     // ✅ FIRST: Initialize webcam and get camera permission
     let resweb = await initializeWebcam()
-    console.log("Webcam initialized:", resweb);
+     
     
     if(resweb == true) {
       // ✅ SECOND: Start face detection AFTER webcam is ready
@@ -315,9 +315,9 @@ async function handleStartWebcam() {
         startFaceDetection(() => {
           // Add jump callback for bird control
           velocityYRef.current = -6;
-           console.log("🐦 Bird jumped from face!");
+            
         }, expressionSettings);
-        console.log("Face detection started!");
+         
       }, 1000); // Wait for video stream to be ready
       
       setControlMode("webcam");

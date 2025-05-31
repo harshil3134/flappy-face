@@ -33,7 +33,7 @@ export function setupFaceControl(onJump) {
       maxNumFaces: 1,
       useGpu: true
     });
-    console.log('loaded model')
+     
   }
   createFaceLandmarker();
 
@@ -53,7 +53,7 @@ export function setupFaceControl(onJump) {
 
   function enableCam(event) {
     if (!faceLandmarker) {
-      console.log("Wait! faceLandmarker not loaded yet.");
+       
       return;
     }
 
@@ -104,7 +104,7 @@ export function setupFaceControl(onJump) {
     if (jawOpen && jawOpen.score > .5) {
       if (!prevJawOpen) {
         prevJawOpen = true;
-        console.log('jump');
+         
         onJump();
       }
     } else {
@@ -114,7 +114,7 @@ export function setupFaceControl(onJump) {
     if (kissy && kissy.score > .5) {
       if (!prevKissy) {
         prevKissy = true;
-        console.log('kiss');
+         
         onJump();
       }
     } else {
@@ -124,7 +124,7 @@ export function setupFaceControl(onJump) {
     if (browInnerUp && browInnerUp.score > .5) {
       if (!prevBrowInnerUp) {
         prevBrowInnerUp = true;
-        console.log('brow');
+         
         onJump();
       }
     } else {
