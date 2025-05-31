@@ -41,7 +41,7 @@ A revolutionary twist on the classic Flappy Bird game that combines traditional 
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/flappy-face.git
+   git clone https://github.com/harshil3134/flappy-face.git
    cd flappy-face
    ```
 
@@ -122,14 +122,21 @@ The built files will be in the `dist/` directory, ready for deployment.
 
 ### Expression Detection Algorithm
 
-The face detection system analyzes facial landmarks to detect expressions:
+The face detection system uses MediaPipe's Face Blendshapes to detect expressions:
 
 ```javascript
-// Example: Smile detection
-const leftMouth = landmarks[61];
-const rightMouth = landmarks[291];
-const mouthDistance = Math.abs(leftMouth.x - rightMouth.x);
-const isSmiling = mouthDistance > SMILE_THRESHOLD;
+// MediaPipe provides pre-calculated expression scores
+const mouthPucker = result[38];    // Mouth pucker blendshape
+const eyeBlinkLeft = result[8];    // Left eye blink
+const eyeBlinkRight = result[9];   // Right eye blink
+const jawOpen = result[25];        // Jaw opening
+const smileLeft = result[44];      // Left smile
+const smileRight = result[45];     // Right smile
+
+// Check if expression exceeds threshold
+if (smileLeft.score > 0.5 || smileRight.score > 0.5) {
+  triggerJump();
+}
 ```
 
 ## 🎨 UI/UX Features
@@ -149,28 +156,32 @@ const isSmiling = mouthDistance > SMILE_THRESHOLD;
 ## 🔧 Configuration
 
 ### Expression Sensitivity
-You can adjust detection thresholds in `facecontrol.js`:
+Expression detection uses MediaPipe's Face Blendshapes with these thresholds in `facecontrol.js`:
 
 ```javascript
-const EXPRESSION_THRESHOLDS = {
-  smile: 0.02,
-  jawOpen: 0.03,
-  eyeBlink: 0.4,
-  mouthPucker: 0.015,
-  eyebrowRaise: 0.02
-};
+// All expressions use a 0.5 score threshold
+if (mouthPucker.score > 0.5) shouldJump = true;
+if (eyeBlinkLeft.score > 0.5 || eyeBlinkRight.score > 0.5) shouldJump = true;
+if (jawOpen.score > 0.5) shouldJump = true;
+if (smileLeft.score > 0.5 || smileRight.score > 0.5) shouldJump = true;
+
+// Debounce time to prevent rapid jumps
+const DEBOUNCE_TIME = 700; // milliseconds
 ```
 
 ### Game Physics
-Modify game parameters in `Game.jsx`:
+Game parameters in `Game.jsx`:
 
 ```javascript
-const GAME_CONFIG = {
-  gravity: 0.4,
-  jumpForce: -6,
-  pipeSpeed: 2,
-  pipeGap: 150
-};
+const gravity = 0.2;           // Downward acceleration
+const jumpStrength = -6;       // Upward velocity on jump
+const pipeWidth = 60;          // Width of obstacle pipes
+const pipeGap = 180;           // Vertical gap between pipes
+const baseSpeed = 2.5;         // Base horizontal pipe speed
+const desiredPipeGap = 300;    // Horizontal distance between pipes
+
+// Dynamic speed increase
+const pipeSpeed = baseSpeed + Math.floor(score / 5) * 0.3;
 ```
 
 ## 🤝 Contributing
