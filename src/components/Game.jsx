@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./game.css";
 import { createFaceLandmarker, initializeWebcam, isFaceModelLoaded, startFaceDetection, stopFaceDetection } from "../facecontrol";
+import { track } from "@vercel/analytics";
 
 
 function Game() {
@@ -329,6 +330,9 @@ if (distanceSinceLastPipe >= desiredPipeGap) {
 
   // Start button handlers
   function handleStartKeyboard() {
+    // Track keyboard game start
+    track('game_start', { control_mode: 'keyboard' });
+    
     setControlMode("keyboard");
     setGameState("running");
     setBirdPos({ x: 100, y: 250 });
@@ -362,6 +366,9 @@ async function handleStartWebcam() {
       setGameState("running");
       setBirdPos({ x: 100, y: 250 });
       setScore(0);
+      
+      // Track webcam game start
+      track('game_start', { control_mode: 'webcam' });
     } else {
       console.error('Failed to initialize webcam');
     }
