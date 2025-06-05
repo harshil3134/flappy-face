@@ -1,10 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import "./game.css";
 import { createFaceLandmarker, initializeWebcam, isFaceModelLoaded, startFaceDetection, stopFaceDetection } from "../facecontrol";
-import { track } from "@vercel/analytics";
 
 
 function Game() {
+  // Custom tracking function that works with AdBlock bypass
+  const trackEvent = (eventName, properties = {}) => {
+    try {
+      // Use the custom analytics if available
+      if (window.va) {
+        window.va('track', eventName, properties);
+      }
+      // Fallback: log to console for debugging
+      console.log('Analytics Event:', eventName, properties);
+    } catch (error) {
+      console.log('Analytics blocked, using fallback:', eventName, properties);
+      // Optional: Send to your own analytics endpoint if needed
+    }
+  };
+
   const canvasRef = useRef(null);
   const [birdPos, setBirdPos] = useState({ x: 100, y: 250 });
   const [gameState, setGameState] = useState("start"); // "start", "running", "gameover"
@@ -331,7 +345,7 @@ if (distanceSinceLastPipe >= desiredPipeGap) {
   // Start button handlers
   function handleStartKeyboard() {
     // Track keyboard game start
-    track('game_start', { control_mode: 'keyboard' });
+    trackEvent('game_start', { control_mode: 'keyboard' });
     
     setControlMode("keyboard");
     setGameState("running");
@@ -368,7 +382,7 @@ async function handleStartWebcam() {
       setScore(0);
       
       // Track webcam game start
-      track('game_start', { control_mode: 'webcam' });
+      trackEvent('game_start', { control_mode: 'webcam' });
     } else {
       console.error('Failed to initialize webcam');
     }
