@@ -8,7 +8,7 @@ import { Analytics } from "@vercel/analytics/react";
 function App() {
 return(
   <>
-  <Analytics mode="production"/>
+  <Analytics mode="production" basePath="/monitor"/>
   <Game/>
   </>
 )
